@@ -4,7 +4,7 @@ WORKDIR /
 ENV XRAY_VERSION=2.0.0
 
 RUN apk --no-cache add ca-certificates
-RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
+RUN apk --no-cache add --virtual build-dependencies bash git curl jq libgcc unzip gpgme \
     # # Install GNU libc
     && GLIBC_VERSION=2.26-r0 \
     && GLIBC_DL_URL="https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}" \
@@ -30,12 +30,13 @@ RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gp
     && rm -rf ${xray_zip} ${xray_zip}.sig \
     && ln -s /usr/lib/xray /usr/bin/ \
     && ln -sf /dev/stdout /var/log/xray-daemon.log \
-    # Install dep
-    && curl --location --silent --show-error -O https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
     # Install go-swagger
     && latestv=$(curl --location --silent --show-error -O -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | jq -r .tag_name) \
     && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
     && chmod +x /usr/local/bin/swagger \
+    # Install dep
+    && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+    # Clean build dependancies
     && apk del --purge -r build-dependencies 
 
 EXPOSE 2000/udp
