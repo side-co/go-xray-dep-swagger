@@ -2,6 +2,7 @@ FROM golang:alpine
 
 WORKDIR /
 ENV XRAY_VERSION=2.0.0
+ENV GOLANGCI_LINT_VERSION=1.9.3
 
 RUN apk --no-cache add ca-certificates git make clang gcc
 RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
@@ -36,6 +37,8 @@ RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gp
     && chmod +x /usr/local/bin/swagger \
     # Install dep
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+    # Install golintci-lint
+    && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION} \
     # Clean build dependancies
     && apk del --purge -r build-dependencies 
 
