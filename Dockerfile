@@ -9,9 +9,9 @@ RUN apk update \
     # Update and updgrage alpine packages
     && apk upgrade \
     # Install required pakcages
-    && apk --no-cache add ca-certificates git make clang gcc libc-dev docker openrc \
+    && apk --no-cache add ca-certificates git make bash \
     # Install packages needed for this image to build (cleaned at the end)
-    && apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
+    && apk --no-cache add --virtual build-dependencies curl jq libgcc unzip gpgme \
     # Install GNU libc
     && GLIBC_VERSION=2.26-r0 \
     && GLIBC_DL_URL="https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}" \
@@ -22,7 +22,7 @@ RUN apk update \
     && /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib \
     && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 \
     && rm -rf glibc-${GLIBC_VERSION}.apk glibc-bin-${GLIBC_VERSION}.apk glibc-i18n-${GLIBC_VERSION}.apk \
-    # Install aws
+    # Install AWS
     && curl -o /usr/local/bin/aws https://raw.githubusercontent.com/mesosphere/aws-cli/master/aws.sh \
     && chmod a+x /usr/local/bin/aws \
     # Install AWS X-Ray daemon
@@ -47,9 +47,7 @@ RUN apk update \
     # Install golintci-lint
     && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION} \
     # Clean build dependancies
-    && apk del --purge -r build-dependencies \
-    # Run docker at boot 
-    && rc-update add docker boot    
+    && apk del --purge -r build-dependencies 
 
 EXPOSE 2000/udp
 
