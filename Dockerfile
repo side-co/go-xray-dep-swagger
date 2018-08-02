@@ -1,11 +1,17 @@
 FROM golang:alpine
 
 WORKDIR /
+
 ENV XRAY_VERSION=2.0.0
 ENV GOLANGCI_LINT_VERSION=1.9.3
 
-RUN apk --no-cache add ca-certificates git make clang gcc libc-dev docker 
-RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
+RUN apk update \
+    # Update and updgrage alpine packages
+    && apk upgrade \
+    # Install required pakcages
+    && apk --no-cache add ca-certificates git make clang gcc libc-dev docker openrc \
+    # Install packages needed for this image to build (cleaned at the end)
+    && apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
     # Install GNU libc
     && GLIBC_VERSION=2.26-r0 \
     && GLIBC_DL_URL="https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}" \
@@ -45,9 +51,6 @@ RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gp
     # Run docker at boot 
     && rc-update add docker boot    
 
-
 EXPOSE 2000/udp
-
-
 
 CMD ["bash"]
