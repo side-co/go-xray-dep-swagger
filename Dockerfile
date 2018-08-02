@@ -4,7 +4,8 @@ WORKDIR /
 ENV XRAY_VERSION=2.0.0
 ENV GOLANGCI_LINT_VERSION=1.9.3
 
-RUN apk --no-cache add ca-certificates git make clang gcc libc-dev
+RUN apk update \
+    && apk --no-cache add ca-certificates git make clang gcc libc-dev docker 
 RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
     # Install GNU libc
     && GLIBC_VERSION=2.26-r0 \
@@ -41,7 +42,10 @@ RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gp
     # Install golintci-lint
     && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION} \
     # Clean build dependancies
-    && apk del --purge -r build-dependencies 
+    && apk del --purge -r build-dependencies \
+    # Run docker at boot 
+    && rc-update add docker boot    
+
 
 EXPOSE 2000/udp
 
