@@ -4,8 +4,7 @@ WORKDIR /
 ENV XRAY_VERSION=2.0.0
 ENV GOLANGCI_LINT_VERSION=1.9.3
 
-RUN apk update \
-    && apk --no-cache add ca-certificates git make clang gcc libc-dev docker 
+RUN apk --no-cache add ca-certificates git make clang gcc libc-dev docker 
 RUN apk --no-cache add --virtual build-dependencies bash curl jq libgcc unzip gpgme \
     # Install GNU libc
     && GLIBC_VERSION=2.26-r0 \
