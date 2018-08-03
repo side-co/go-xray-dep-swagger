@@ -21,6 +21,7 @@ RUN apk update \
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
     # Install golintci-lint
     && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION} \
+    && rm -rf /tmp/* \
     # Install AWS
     # && curl -o /usr/local/bin/aws https://raw.githubusercontent.com/mesosphere/aws-cli/master/aws.sh \
     # && chmod a+x /usr/local/bin/aws \
