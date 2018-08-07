@@ -10,12 +10,11 @@ ENV XRAY_VERSION=2.0.0
 RUN apk update \
     # Update and updgrage alpine packages
     && apk upgrade \
-    # Install required packages
-    && apk --no-cache add ca-certificates bash git make \
+    # Install required packages (libc6-compat => x-ray)
+    && apk --no-cache add ca-certificates bash git make libc6-compat \
     # Install required packages to lint go code
     && apk --no-cache add clang gcc libc-dev \
     # Install packages needed for this image to build (cleaned at the end)
-    # && apk --no-cache add --virtual build-dependencies git curl jq libgcc unzip gpgme \
     && apk --no-cache add --virtual build-dependencies curl jq unzip gpgme \
     # Install dep
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
@@ -26,24 +25,18 @@ RUN apk update \
     # && curl -o /usr/local/bin/aws https://raw.githubusercontent.com/mesosphere/aws-cli/master/aws.sh \
     # && chmod a+x /usr/local/bin/aws \
     # Install AWS X-Ray daemon
-    # && cd /usr/lib \
-    # && xray_url=https://s3.dualstack.us-east-2.amazonaws.com/aws-xray-assets.us-east-2/xray-daemon \
-    # && xray_zip=aws-xray-daemon-linux-${XRAY_VERSION}.zip \
-    # && curl -O --location --silent --show-error ${xray_url}/${xray_zip} \
-    # && curl -O --location --silent --show-error ${xray_url}/${xray_zip}.sig \
-    # && curl --location --silent --show-error ${xray_url}/aws-xray.gpg | gpg --import \
-    # && gpg --verify ${xray_zip}.sig ${xray_zip} \
-    # && unzip -q ${xray_zip} \
-    # && chmod +x /usr/lib/xray \
-    # && rm -rf ${xray_zip} ${xray_zip}.sig \
-    # && ln -s /usr/lib/xray /usr/bin/ \
-    # && ln -sf /dev/stdout /var/log/xray-daemon.log \
+    && curl https://s3.dualstack.us-east-1.amazonaws.com/aws-xray-assets.us-east-1/xray-daemon/aws-xray-daemon-linux-2.x.zip -o install.zip \ 
+    && unzip install.zip -d xray_install \ 
+    && mkdir -p xray_install \ 
+    && mv xray_install/xray /usr/bin/xray \ 
+    && rm -rf install.zip xray_install \ 
+    && apk del --purge -r build-dependencies 
     # Install go-swagger
     # && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | jq -r .tag_name) \
     # && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
     # && chmod +x /usr/local/bin/swagger \
     # Clean build dependancies
-    && apk del --purge -r build-dependencies 
+
 
 EXPOSE 2000/udp
 
