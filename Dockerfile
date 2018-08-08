@@ -20,9 +20,9 @@ RUN apk update \
     && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION} \
     && rm -rf /tmp/* \
     # Install go-swagger
-    # && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | jq -r .tag_name) \
-    # && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
-    # && chmod +x /usr/local/bin/swagger \
+    && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | jq -r .tag_name) \
+    && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
+    && chmod +x /usr/local/bin/swagger \
     # Clean build dependancies
     && apk del --purge -r build-dependencies 
 
