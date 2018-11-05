@@ -1,6 +1,8 @@
-FROM side/go
+FROM side/go:1.0.0
 
 WORKDIR /
+
+ENV GO_SWAGGER_VERSION=v0.17.2
 
 RUN apk update \
     # Update and updgrage alpine packages
@@ -8,7 +10,7 @@ RUN apk update \
     # Install packages needed for this image to build (cleaned at the end)
     && apk --no-cache add --virtual build-dependencies curl jq unzip gpgme \
     # Install go-swagger
-    && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | jq -r .tag_name) \
+    && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/${GO_SWAGGER_VERSION} | jq -r .tag_name) \
     && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
     && chmod +x /usr/local/bin/swagger \
     # Clean build dependancies
