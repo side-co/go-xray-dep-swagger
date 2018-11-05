@@ -2,7 +2,7 @@ FROM side/go:1.0.1
 
 WORKDIR /
 
-ENV GO_SWAGGER_VERSION=v0.17.2
+ENV GO_SWAGGER_VERSION=latest
 
 RUN apk update \
     # Update and updgrage alpine packages
