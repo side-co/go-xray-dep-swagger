@@ -1,4 +1,4 @@
-FROM side/go:1.0.1
+FROM side/go:1.1.0
 
 WORKDIR /
 
