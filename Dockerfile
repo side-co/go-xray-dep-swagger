@@ -1,20 +1,21 @@
-FROM side/go:1.1.0
+FROM side/go:2.0.0
 
 WORKDIR /
 
-ENV GO_SWAGGER_VERSION=latest
+ENV GO_SWAGGER_VERSION=0.17.2
 
-RUN apk update \
-    # Update and updgrage alpine packages
-    && apk upgrade \
-    # Install packages needed for this image to build (cleaned at the end)
-    && apk --no-cache add --virtual build-dependencies curl jq unzip gpgme \
+RUN \
+    # Add go-swagger apt repository
+    echo "deb http://dl.bintray.com/go-swagger/goswagger-debian ubuntu main" | tee -a /etc/apt/sources.list \
+    # Update packages
+    && apt-get update \
+    # Upgrade packages
+    && apt-get upgrade -y \
     # Install go-swagger
-    && latestv=$(curl --location --silent --show-error -s https://api.github.com/repos/go-swagger/go-swagger/releases/${GO_SWAGGER_VERSION} | jq -r .tag_name) \
-    && curl --location --silent --show-error -o /usr/local/bin/swagger -L'#' https://github.com/go-swagger/go-swagger/releases/download/$latestv/swagger_$(echo `uname`|tr '[:upper:]' '[:lower:]')_amd64 \
-    && chmod +x /usr/local/bin/swagger \
-    # Clean build dependancies
-    && apk del --purge -r build-dependencies 
+    && apt-get install -y --no-install-recommends --allow-unauthenticated \
+    swagger=${GO_SWAGGER_VERSION} \
+    # Clean up APT when done.
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 2000/udp
 
