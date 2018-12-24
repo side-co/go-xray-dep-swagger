@@ -8,4 +8,3 @@ Added tools:
 - **dep**: v0.5.0
 - **golangci-lint**: v1.12.3
 - **swagger**: v0.17.2
->>>>>>> chore: update base image from alpine to stretech
