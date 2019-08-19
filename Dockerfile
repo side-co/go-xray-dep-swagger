@@ -1,4 +1,4 @@
-FROM side/go:2.4.2
+FROM side/go:2.5.0
 
 WORKDIR /
 
